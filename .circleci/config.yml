@@ -3,7 +3,6 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test-backend:
-    working_directory: ~/Automated-pipeline
     executor:
       name: node/default
     steps:
@@ -12,11 +11,12 @@ jobs:
       - run: npm i
       - run: npm run test
   build-and-test-frontend:
-    working_directory: ~/Automated-pipeline
     executor:
       name: node/default
     steps:
       - checkout
+      - run: pwd
+      - run: ls
       - run: cd frontend
       - run: npm i
       - run: npm run test
