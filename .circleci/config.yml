@@ -31,7 +31,7 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - run: cd backend && npm i && npm audit --audit-level=critical
+      - run: cd frontend && npm i && npm audit --audit-level=critical
   build-frontend:
     executor:
       name: node/default
