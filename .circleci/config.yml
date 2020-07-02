@@ -8,6 +8,8 @@ jobs:
     steps:
       - checkout
       - run: cd backend && npm i && npm run test
+      - store_artifacts:
+          path: test-results
       - store_test_results:
           path: test-results
   test-frontend:
@@ -16,6 +18,8 @@ jobs:
     steps:
       - checkout
       - run: cd frontend && npm i && npm run test
+      - store_artifacts:
+          path: test-results
       - store_test_results:
           path: test-results
   build-backend:
