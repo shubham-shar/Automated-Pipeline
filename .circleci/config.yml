@@ -45,7 +45,7 @@ jobs:
 workflows:
     build-and-test:
       jobs:
-        - build-frontend:
+        - build-frontend
         - build-backend:
             requires:
               - build-frontend
@@ -59,6 +59,6 @@ workflows:
             requires:
               - test-backend
         - analyze-frontend:
-            requires:
+            requires:s
               - analyze-backend
         
