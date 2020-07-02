@@ -49,7 +49,7 @@ workflows:
         - build-backend:
             requires:
               - build-frontend
-        - test-frontend
+        - test-frontend:
             requires:
               - build-backend
         - test-backend:
