@@ -33,7 +33,7 @@ jobs:
       - store_test_results:
           path: ./frontend/junit.xml
       - store_artifacts:
-          path: ./frontend/junit/
+          path: ./frontend/junit.xml
   build-backend:
     executor:
       name: node/default
