@@ -22,8 +22,8 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install JUnit
-        command: yarn add --dev jest
+          name: Install JUnit
+          command: yarn add --dev jest
       - run:
           name: Install JUnit coverage reporter
           command: yarn add --dev jest-junit
