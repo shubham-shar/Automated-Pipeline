@@ -7,6 +7,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "circleci-test": "jest --ci --runInBand --reporters=default --reporters=jest-junit",
     "pretest:cov": "npm run lint",
     "test:cov": "jest --coverage",
     "start": "webpack-dev-server --mode development --hot --progress --color --port 3000 --open",

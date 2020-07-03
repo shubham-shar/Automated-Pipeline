@@ -29,7 +29,7 @@ jobs:
           command: yarn add --dev jest-junit
       - run:
           name: Run tests with JUnit as reporter
-          command: cd frontend && npm i && jest --ci --runInBand --reporters=default --reporters=jest-junit
+          command: cd frontend && npm i && npm run circleci-test
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
       - store_test_results:
