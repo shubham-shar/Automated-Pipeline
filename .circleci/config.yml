@@ -34,7 +34,7 @@ jobs:
           path: ./frontend/junit.xml
           destination: junit
       - store_test_results:
-          path: ./junit
+          path: ./frontend/junit.xml
       
   build-backend:
     executor:
