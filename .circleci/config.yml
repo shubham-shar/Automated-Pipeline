@@ -31,9 +31,10 @@ jobs:
           name: Run tests with JUnit as reporter
           command: cd frontend && npm i && npm run circleci-test
       - store_test_results:
-          path: ./frontend/junit.xml
+          path: ./frontend/
       - store_artifacts:
           path: ./frontend/junit.xml
+          destination: junit
   build-backend:
     executor:
       name: node/default
