@@ -33,6 +33,9 @@ jobs:
       - store_artifacts:
           path: ./frontend/junit.xml
           destination: junit
+      - run:
+          name: Checking ls
+          command: ls
       - store_test_results:
           path: ./frontend/junit.xml
       
