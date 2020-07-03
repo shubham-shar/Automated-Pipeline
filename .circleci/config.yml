@@ -31,13 +31,10 @@ jobs:
           name: Run tests with JUnit as reporter
           command: cd frontend && npm i && npm run circleci-test
       - store_artifacts:
-          path: ./frontend/junit.xml
+          path: ./frontend/junit
           destination: junit
-      - run:
-          name: Checking ls
-          command: ls
       - store_test_results:
-          path: ./frontend/junit.xml
+          path: ./frontend/junit
       
   build-backend:
     executor:
