@@ -20,7 +20,6 @@ jobs:
     executor:
       name: node/default
     steps:
-    steps:
       - checkout
       - run:
           name: Install JUnit coverage reporter
