@@ -2,20 +2,81 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  build-and-test-backend:
+  test-backend:
     executor:
       name: node/default
     steps:
       - checkout
       - run: cd backend && npm i && npm run test
-  build-and-test-frontend:
+      - store_artifacts:
+          path: test-results
+          prefix: tests
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
+      - store_test_results:
+          path: test-results
+  test-frontend:
     executor:
       name: node/default
     steps:
       - checkout
-      - run: cd frontend && npm i && npm run test
+      - run:
+          name: Install JUnit
+          command: yarn add --dev jest
+      - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          command: cd frontend && npm i && npm run circleci-test
+      - store_artifacts:
+          path: ./frontend/junit
+          destination: junit
+      - store_test_results:
+          path: ./frontend/junit
+      
+  build-backend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd backend && npm i && npm run build
+  analyze-backend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd backend && npm i && npm audit --audit-level=critical
+  analyze-frontend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd frontend && npm i && npm audit --audit-level=critical
+  build-frontend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - run: cd frontend && npm i && npm run build
 workflows:
     build-and-test:
       jobs:
-        - build-and-test-frontend
-        - build-and-test-backend
+        - build-frontend
+        - build-backend:
+            requires:
+              - build-frontend
+        - test-frontend:
+            requires:
+              - build-backend
+        - test-backend:
+            requires:
+              - test-frontend
+        - analyze-backend:
+            requires:
+              - test-backend
+        - analyze-frontend:
+            requires:
+              - analyze-backend
+        
