@@ -1,59 +1,184 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+commands:
+  destroy-environment:
+    description: Destroy Backend and Frontend
+    parameters:
+      workflow_id:
+        type: string
+      event:
+        type: string
+    steps:
+      - run:
+          name: Destroy environment << parameters.workflow_id >>
+          when: << parameters.event >>
+          command: |
+            echo "Destroying environment << parameters.workflow_id >>"
+            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
+
+  # rollback-migrations-on-fail:
+  #   description: Roll back migrations if needed
+  #   steps:
+  #     - restore_cache:
+  #         keys: [backend-build]
+  #     - attach_workspace:
+  #         at: ~/project/backend
+  #     - run:
+  #         name: Revert migrations
+  #         command: |
+
 jobs:
+  build-frontend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run: cd frontend && npm i && npm run build
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+  build-backend:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run: cd backend && npm i && npm run build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
   test-backend:
     executor:
       name: node/default
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run: cd backend && npm i && npm run test
   test-frontend:
     executor:
       name: node/default
     steps:
       - checkout
-      - run: cd frontend && npm i && npm run test
-  build-backend:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - run: cd backend && npm i && npm run build
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Install JUnit
+          command: yarn add --dev jest
+      - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          command: cd frontend && npm i && npm run circleci-test
+      - store_artifacts:
+          path: ./frontend/junit
+          destination: junit
+      - store_test_results:
+          path: ./frontend/junit
   analyze-backend:
     executor:
       name: node/default
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run: cd backend && npm i && npm audit --audit-level=critical
   analyze-frontend:
     executor:
       name: node/default
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build]
       - run: cd frontend && npm i && npm audit --audit-level=critical
-  build-frontend:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - run: cd frontend && npm i && npm run build
+  - deploy-infrastructure:
+      docker:
+        - image: amazon/aws-cli
+      branches:
+        only:
+          - master
+          - circleci-project-setup
+      steps:
+        - checkout
+        - run: yum -y install tar gzip
+        - run:
+            name: Setup backend Infrastructure
+            command: |
+              aws cloudformation deploy \
+                --template-file .circleci/files/backend.yml \
+                --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+                --tags project=udapeople
+        - run:
+            name: Setup frontend Infrastructure
+            command: |
+              aws cloudformation deploy \
+                --template-file .circleci/files/frontend.yml \
+                --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+                --tags project=udapeople
+        - run:
+            name: Add backend ip to ansible inventory
+            command: |
+              aws ec2 describe-instances \
+                --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> .circleci/ansible/inventory.txt
+        - run:
+            command: return 1
+        - persist_to_workspace:
+            root: ~/
+            paths:
+              - project/.circleci/ansible/inventory.txt
+        - destroy-environment:
+            workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+            event: on_fail
+  
+  # configure-infrastructure:
+  #   docker:
+  #     - image: python: 3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: []
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Install dependencies
+
+
 workflows:
     build-and-test:
       jobs:
-        - test-frontend
-        - test-backend:
-            requires:
-              - test-frontend
-        - analyze-backend:
-            requires:
-              - test-backend
-        - analyze-frontend:
-            requires:
-              - analyze-backend
-        - build-frontend:
-            requires:
-              - analyze-frontend
-        - build-backend:
+        - build-frontend
+        - build-backend
+        - test-frontend:
             requires:
               - build-frontend
+        - test-backend:
+            requires:
+              - build-backend
+        - analyze-backend:
+            requires:
+              - build-backend
+        - analyze-frontend:
+            requires:
+              - build-frontend
+        - deploy-infrastructure:
+            requires: [test-frontend, test-backend, analyze-frontend, analyze-backend]
+        # - configure-infrastructure:
+        #     requires:
+        #       - deploy-infrastructure
+        # - run-migrations:
+        #     requires:
+        #       - configure-infrastructure
+        # - deploy-frontend:
+        #     requires:
+        #        - run-migrations
