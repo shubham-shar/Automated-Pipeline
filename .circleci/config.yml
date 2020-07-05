@@ -107,7 +107,6 @@ jobs:
           name: Update PATH and Define Environment Variable at Runtime
           command: |
             echo "export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID}" >> $BASH_ENV
-            echo "TRIGGERER: ${CIRCLE_WORKFLOW_ID}"
             source $BASH_ENV
       - run: yum -y install tar gzip
       - run:
@@ -140,7 +139,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
-          workflow_id: ${WORKFLOW_ID}
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
           event: on_fail
   
   # configure-infrastructure:
