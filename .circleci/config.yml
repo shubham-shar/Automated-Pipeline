@@ -98,7 +98,7 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       - run: cd frontend && npm i && npm audit --audit-level=critical
-  - deploy-infrastructure:
+  deploy-infrastructure:
       docker:
         - image: amazon/aws-cli
       branches:
