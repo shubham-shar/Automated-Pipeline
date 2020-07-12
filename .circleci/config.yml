@@ -151,7 +151,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
-      - run: ls -a && at .circleci/ansible/inventory.txt
+      - run: ls -a ../ && cat .circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
           command: 
