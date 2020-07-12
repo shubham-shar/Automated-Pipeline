@@ -19,16 +19,19 @@ commands:
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
 
-  # rollback-migrations-on-fail:
-  #   description: Roll back migrations if needed
-  #   steps:
-  #     - restore_cache:
-  #         keys: [backend-build]
-  #     - attach_workspace:
-  #         at: ~/project/backend
-  #     - run:
-  #         name: Revert migrations
-  #         command: |
+  rollback-migrations-on-fail:
+    description: Roll back migrations
+    parameters:
+      event:
+        type: string
+    steps:
+      - restore_cache:
+          keys: [backend-build]
+      - attach_workspace:
+          at: ~/project/backend
+      - run:
+          name: Revert migrations
+          command: cd backend && npm i && npm run migrations:revert
 
 jobs: 
   build-frontend:
@@ -151,17 +154,31 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
-      - run: ls -a ../ && cat .circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
           command: 
             cd .circleci/ansible/ && ansible-playbook main-configure.yml -i inventory.txt
-      - run:
-          command: return 1
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
-
+  run-migrations:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Install dependencies
+          command: |
+            pip install awscli && pip install npm
+      - run: cd backend && npm i && npm run migrations
+      - run: return 1
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          event: on_fail
+      - rollback-migrations-on-fail:
+          event: on_fail
 
 workflows:
     build-and-test:
@@ -190,9 +207,9 @@ workflows:
         - configure-infrastructure:
             requires:
               - deploy-infrastructure
-        # - run-migrations:
-        #     requires:
-        #       - configure-infrastructure
+        - run-migrations:
+            requires:
+              - configure-infrastructure
         # - deploy-frontend:
         #     requires:
         #        - run-migrations
