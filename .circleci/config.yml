@@ -151,7 +151,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
-      - run: cat inventory.txt
+      - run: pwd && ls && ls ~/ && cat inventory.txt
       - run:
           name: Install dependencies
           command: 
