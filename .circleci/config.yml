@@ -131,7 +131,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> .circleci/ansible/inventory.txt
       - persist_to_workspace:
-          root: ~/
+          root: ~/temp/server
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
@@ -146,16 +146,16 @@ jobs:
       - add_ssh_keys:
           fingerprints: [ba:81:57:7e:f2:1d:d8:07:4e:fd:67:3d:0b:07:84:bc]
       - attach_workspace:
-          at: ~/
+          at: ~/temp/server
       - run:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
-      - run: pwd && ls && find / -name "inventory.txt" && cat inventory.txt
+      - run: ls -a && at .circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
           command: 
-            ansible-playbook .circleci/ansible/main-configure.yml -i inventory.txt
+            cd .circleci/ansible/ && ansible-playbook main-configure.yml -i inventory.txt
       - run:
           command: return 1
       - destroy-environment:
