@@ -18,4 +18,12 @@
     global: yes
     production: yes
     state: present
-    
+- name: Creates directory
+  file:
+    path: ~/application
+    state: directory
+
+- name: Copy  backend folder
+  template:
+    src: "files/backend"
+    dest: "~/application/"
