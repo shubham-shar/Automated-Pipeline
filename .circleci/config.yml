@@ -163,6 +163,9 @@ jobs:
             apk add --update ansible && pip install awscli
       - run:
           name: Install dependencies
+          command: cat .circleci/ansible/roles/configure-server/files/source/backend/package.json
+      - run:
+          name: Install dependencies
           command: 
             cd .circleci/ansible/ && ansible-playbook main-configure.yml -i inventory.txt
       - destroy-environment:
