@@ -22,6 +22,10 @@ commands:
   rollback-migrations-on-fail:
     description: Roll back migrations
     parameters:
+      workflow_id:
+        type: string
+      event:
+        type: string
       when:
         type: string
     steps:
@@ -32,6 +36,9 @@ commands:
       - run:
           name: Revert migrations
           command: cd backend && npm i && npm run migrations:revert
+      - destroy-environment:
+          workflow_id: << parameters.workflow_id >>
+          event: << parameters.event >>
 
 jobs: 
   build-frontend:
@@ -174,10 +181,9 @@ jobs:
             pip install awscli && apk add --update nodejs npm
       - run: cd backend && npm i && npm run migrations
       - run: return 1
-      - destroy-environment:
+      - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
-      - rollback-migrations-on-fail:
           when: on_fail
 
 workflows:
