@@ -26,5 +26,5 @@
 - name: Copy backend folder
   become: true
   copy:
-    src: files/source/Readme.md
+    src: files/source/
     dest: ~/application/
