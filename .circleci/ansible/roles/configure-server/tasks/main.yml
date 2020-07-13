@@ -24,6 +24,7 @@
     state: directory
 
 - name: Copy backend folder
+  become: true
   copy:
     src: ~/.circleci/ansible/roles/configure-server/files/source
     dest: ~/application/
