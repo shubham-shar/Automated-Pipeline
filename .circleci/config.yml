@@ -59,7 +59,6 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run: cd backend && npm i && npm run build
-      - run: cp -avr backend .circleci/ansible/roles/configure-server/files/source/
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -161,9 +160,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
-      - run:
-          name: Install dependencies
-          command: cat .circleci/ansible/roles/configure-server/files/source/backend/package.json
+      - run: cp -avr backend .circleci/ansible/roles/configure-server/files/source/
       - run:
           name: Install dependencies
           command: 
