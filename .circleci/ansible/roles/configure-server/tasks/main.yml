@@ -23,8 +23,11 @@
     path: ~/application
     state: directory
 
-- name: Checking PWD and ls 
-  command: pwd && ls -a
+- name: Checking PWD
+  command: pwd
+
+- name: Checking ls
+  command: ls
 
 - name: Copy backend folder
   copy:
