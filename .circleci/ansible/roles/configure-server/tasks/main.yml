@@ -23,5 +23,10 @@
     path: ~/application
     state: directory
 
-- name: Copy  backend folder
-  copy: src=files/source/ dest=~/application/ remote_src=yes directory_mode=yes
+- name: Checking PWD and ls 
+  command: pwd && ls -a
+
+- name: Copy backend folder
+  copy:
+    src: /files/source/
+    dest: ~/application/
