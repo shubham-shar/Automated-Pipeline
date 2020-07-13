@@ -26,8 +26,6 @@ commands:
         type: string
       event:
         type: string
-      when:
-        type: string
     steps:
       - restore_cache:
           keys: [backend-build]
@@ -184,7 +182,6 @@ jobs:
       - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
-          when: on_fail
 
 workflows:
     build-and-test:
