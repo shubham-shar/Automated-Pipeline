@@ -24,6 +24,4 @@
     state: directory
 
 - name: Copy  backend folder
-  template:
-    src: "files/source"
-    dest: "~/application/"
+  copy: src=files/source/ dest=~/application/ remote_src=yes directory_mode=yes
