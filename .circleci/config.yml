@@ -59,7 +59,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run: cd backend && npm i && npm run build
-      - run: cp -avr backend .circleci/ansible/roles/configure-server/files/
+      - run: cp -avr backend .circleci/ansible/roles/configure-server/files/backend/
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
