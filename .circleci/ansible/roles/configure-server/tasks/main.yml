@@ -23,13 +23,7 @@
     path: ~/application
     state: directory
 
-- name: Checking PWD
-  command: pwd
-
-- name: Checking ls
-  command: ls
-
 - name: Copy backend folder
   copy:
-    src: /files/source/
+    src: ~/.circleci/ansible/roles/configure-server/files/source
     dest: ~/application/
