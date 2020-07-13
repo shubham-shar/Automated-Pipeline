@@ -33,6 +33,7 @@ commands:
           at: ~/project/backend
       - run:
           name: Revert migrations
+          when: << parameters.event >>
           command: cd backend && npm i && npm run migrations:revert
       - destroy-environment:
           workflow_id: << parameters.workflow_id >>
