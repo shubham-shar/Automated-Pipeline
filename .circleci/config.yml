@@ -229,7 +229,7 @@ jobs:
       - run:
           name: Add API URL to environment variable
           command: |
-            BACKEND_URL = $(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
+            BACKEND_URL=$(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
                             --request GET https://api.memstash.io/values/backend_url)
             echo 'export API_URL=$BACKEND_URL' >> $BASH_ENV    
             source $BASH_ENV
