@@ -200,10 +200,10 @@ jobs:
           name: Install dependencies
           command: 
             cd .circleci/ansible/ && ansible-playbook main-backend-deploy.yml -i inventory.txt
-      - run: return 1
-      - rollback-migrations-on-fail:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-          event: on_fail
+      # - run: return 1
+      # - rollback-migrations-on-fail:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      #     event: on_fail
 workflows:
     build-and-test:
       jobs:
