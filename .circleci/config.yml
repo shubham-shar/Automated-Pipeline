@@ -131,14 +131,24 @@ jobs:
               --tags project=udapeople
       - run:
           name: Add static text to ansible inventory for later use
-          command: echo "[web]" > .circleci/ansible/inventory.txt && touch backend_url.txt
+          command: echo "[web]" > .circleci/ansible/inventory.txt
       - run:
           name: Add backend ip to ansible inventory
           command: |
             aws ec2 describe-instances \
               --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text | tee -a .circleci/ansible/inventory.txt backend_url.txt
+              --output text >> .circleci/ansible/inventory.txt
+      - run:
+          name: Add Backend IP to memstash
+          command: |
+            BACKEND_URL = $(aws ec2 describe-instances \
+            --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text )
+            curl -H "Content-Type: text/plain" -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
+            --request PUT --data "${BACKEND_URL}" 
+            https://api.memstash.io/values/backend_url
       - persist_to_workspace:
           root: ~/
           paths:
@@ -200,10 +210,40 @@ jobs:
           name: Install dependencies
           command: 
             cd .circleci/ansible/ && ansible-playbook main-backend-deploy.yml -i inventory.txt
-      # - run: return 1
-      # - rollback-migrations-on-fail:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      #     event: on_fail
+      - rollback-migrations-on-fail:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          event: on_fail
+  deploy-frontend:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [ba:81:57:7e:f2:1d:d8:07:4e:fd:67:3d:0b:07:84:bc]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            pip install awscli && apk add --update nodejs npm
+      - run:
+          name: Add API URL to environment variable
+          command: |
+            BACKEND_URL = $(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
+                            --request GET https://api.memstash.io/values/backend_url)
+            echo 'export API_URL=$BACKEND_URL' >> $BASH_ENV    
+            source $BASH_ENV
+      - run:
+          name: Build frontend
+          command: |
+            cd frontend/
+            npm i
+            npm run build
+            echo API_URL
+            aws s3 sync "dist/" s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+      - rollback-migrations-on-fail:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          event: on_fail
 workflows:
     build-and-test:
       jobs:
@@ -237,6 +277,6 @@ workflows:
         - deploy-backend:
             requires:
                - run-migrations
-        # - deploy-frontend:
-        #     requires:
-        #        - run-migrations
+        - deploy-frontend:
+            requires:
+               - deploy-backend
