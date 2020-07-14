@@ -32,3 +32,11 @@
 
 - debug:
     var: output
+
+- name: Change file ownership, group and permissions
+  file:
+    path: /home/ubuntu/application/
+    owner: ubuntu
+    group: ubuntu
+    state: directory
+    mode: '0775'
