@@ -1,5 +1,7 @@
 ---
 - name: Executing node
   shell: |
+    cd ~/application/backend/
     npm install
-    pm2 start ~/application/backend/dist/main.js
+    npm run build
+    pm2 start dist/main.js
