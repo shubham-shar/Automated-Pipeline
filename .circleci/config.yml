@@ -243,18 +243,10 @@ jobs:
           event: on_fail
   smoke-test:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - run: yum -y install tar gzip curl nodejs npm
-      - run:
-          name: Test Backend
-          command: |
-            BACKEND_URL=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text)
-            curl "http://${BACKEND_IP}:3030/api/status"
+      - run: pip install awscli && apk add --update nodejs npm curl
       - run:
           name: Test Frontend
           command: |
@@ -265,6 +257,14 @@ jobs:
             else
             return 0
             fi
+      - run:
+          name: Test Backend
+          command: |
+            BACKEND_URL=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            curl "http://${BACKEND_IP}:3030/api/status"
       - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
