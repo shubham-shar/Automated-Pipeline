@@ -27,7 +27,7 @@
   become: true
   copy:
     src: files/source/
-    dest: ~/application/
+    dest: /home/ubuntu/application/
   register: output
 
 - debug:
