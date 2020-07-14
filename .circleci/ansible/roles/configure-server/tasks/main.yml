@@ -40,3 +40,19 @@
     group: ubuntu
     state: directory
     mode: '0775'
+    register: application
+
+- debug:
+    var: application
+
+- name: Change file ownership, group and permissions
+  file:
+    path: /home/ubuntu/application/backend/
+    owner: ubuntu
+    group: ubuntu
+    state: directory
+    mode: '0775'
+    register: backend
+
+- debug:
+    var: backend
