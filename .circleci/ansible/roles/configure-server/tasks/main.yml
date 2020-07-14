@@ -40,7 +40,7 @@
     group: ubuntu
     state: directory
     mode: '0775'
-    register: application
+  register: application
 
 - debug:
     var: application
@@ -52,7 +52,7 @@
     group: ubuntu
     state: directory
     mode: '0775'
-    register: backend
+  register: backend
 
 - debug:
     var: backend
