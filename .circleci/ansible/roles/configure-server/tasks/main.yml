@@ -28,7 +28,7 @@
   copy:
     src: files/source/
     dest: ~/application/
-    register: output
+  register: output
 
 - debug:
     var: output.stdout_lines
