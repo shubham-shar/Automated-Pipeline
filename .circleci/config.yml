@@ -230,7 +230,7 @@ jobs:
           name: Build frontend
           command: |
             BACKEND_URL=$(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
-                              --request GET https://api.memstash.io/values/backend_url)
+                          --request GET https://api.memstash.io/values/backend_url)
             echo 'export API_URL=$BACKEND_URL' >> $BASH_ENV    
             source $BASH_ENV
             cd frontend/
@@ -264,7 +264,7 @@ jobs:
             --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text)
-            curl "http://${BACKEND_IP}:3030/api/status"
+            curl "http://${BACKEND_URL}:3030/api/status"
       - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
