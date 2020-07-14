@@ -28,3 +28,7 @@
   copy:
     src: files/source/
     dest: ~/application/
+  register: output
+
+- debug:
+    var: output.stdout_lines
