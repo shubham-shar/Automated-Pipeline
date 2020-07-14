@@ -227,15 +227,12 @@ jobs:
           command: |
             pip install awscli && apk add --update nodejs npm curl
       - run:
-          name: Add API URL to environment variable
-          command: |
-            BACKEND_URL=$(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
-                            --request GET https://api.memstash.io/values/backend_url)
-            echo 'export API_URL=$BACKEND_URL' >> $BASH_ENV    
-            source $BASH_ENV
-      - run:
           name: Build frontend
           command: |
+            BACKEND_URL=$(curl -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
+                              --request GET https://api.memstash.io/values/backend_url)
+            echo 'export API_URL=$BACKEND_URL' >> $BASH_ENV    
+            source $BASH_ENV
             cd frontend/
             npm i
             npm run build
@@ -249,7 +246,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum -y install tar gzip
+      - run: yum -y install tar gzip curl nodejs npm
       - run:
           name: Test Backend
           command: |
