@@ -147,7 +147,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text)
             curl -H "Content-Type: text/plain" -H "token: 131031c8-61f4-47ad-a4b6-138065566c46" \
-            --request PUT --data "${BACKEND_URL}" 
+            --request PUT --data "${BACKEND_URL}" \
             https://api.memstash.io/values/backend_url
       - persist_to_workspace:
           root: ~/
