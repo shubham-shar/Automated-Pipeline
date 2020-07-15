@@ -281,6 +281,27 @@ jobs:
       - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
+  cleanup-phase:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run: pip install awscli && apk add --update nodejs npm curl
+      - run:
+          name: Delete older stacks and save current stack
+          command: |
+            PREVIOUS_ID=(curl --request GET https://api.memstash.io/values/previous_job \
+                          -H "token: previous_job_id")
+            aws cloudformation delete-stack --stack-name udapeople-backend-${PREVIOUS_ID}
+            aws s3 rm s3://udapeople-${PREVIOUS_ID} --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${PREVIOUS_ID}
+            aws cloudformation delete-stack --stack-name udapeople-${PREVIOUS_ID}
+            curl --request PUT --data "${CIRCLE_WORKFLOW_ID:0:7}" \
+            https://api.memstash.io/values/previous_job \
+            -H "Content-Type: text/plain" -H "token: previous_job_id"
+      - rollback-migrations-on-fail:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          event: on_fail
 workflows:
     build-and-test:
       jobs:
@@ -323,3 +344,6 @@ workflows:
         - promotion-phase:
             requires:
               - smoke-test
+        - cleanup-phase:
+            requires:
+              - promotion-phase
