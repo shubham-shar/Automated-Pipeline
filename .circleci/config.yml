@@ -275,7 +275,7 @@ jobs:
       - run: pip install awscli && apk add --update nodejs npm curl
       - run: |
           aws cloudformation deploy \
-            --template-file cloudfront.yml \
+            --template-file .circleci/files/cloudfront.yml \
             --stack-name ${CIRCLE_WORKFLOW_ID:0:7} \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
       - rollback-migrations-on-fail:
