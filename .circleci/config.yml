@@ -290,7 +290,7 @@ jobs:
       - run:
           name: Delete older stacks and save current stack
           command: |
-            PREVIOUS_ID=(curl --request GET https://api.memstash.io/values/previous_job \
+            PREVIOUS_ID=$(curl --request GET https://api.memstash.io/values/previous_job \
                           -H "token: previous_job_id")
             if test "$PREVIOUS_ID" != "No value matches the provided token and key."
             then
