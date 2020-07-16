@@ -312,6 +312,7 @@ jobs:
           command: |
             PREVIOUS_ID=$(curl --request GET https://api.memstash.io/values/previous_job \
                           -H "token: previous_job_id")
+            echo $PREVIOUS_ID
             if test "$PREVIOUS_ID" != "No value matches the provided token and key."
             then
               aws cloudformation delete-stack --stack-name udapeople-backend-${PREVIOUS_ID}
