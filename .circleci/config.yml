@@ -292,10 +292,13 @@ jobs:
           command: |
             PREVIOUS_ID=(curl --request GET https://api.memstash.io/values/previous_job \
                           -H "token: previous_job_id")
-            aws cloudformation delete-stack --stack-name udapeople-backend-${PREVIOUS_ID}
-            aws s3 rm s3://udapeople-${PREVIOUS_ID} --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${PREVIOUS_ID}
-            aws cloudformation delete-stack --stack-name udapeople-${PREVIOUS_ID}
+            if test "$PREVIOUS_ID" != "No value matches the provided token and key."
+            then
+              aws cloudformation delete-stack --stack-name udapeople-backend-${PREVIOUS_ID}
+              aws s3 rm s3://udapeople-${PREVIOUS_ID} --recursive
+              aws cloudformation delete-stack --stack-name udapeople-frontend-${PREVIOUS_ID}
+              aws cloudformation delete-stack --stack-name udapeople-${PREVIOUS_ID}
+            fi
             curl --request PUT --data "${CIRCLE_WORKFLOW_ID:0:7}" \
             https://api.memstash.io/values/previous_job \
             -H "Content-Type: text/plain" -H "token: previous_job_id"
