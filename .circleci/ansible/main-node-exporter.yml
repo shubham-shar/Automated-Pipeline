@@ -17,15 +17,4 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
       changed_when: false
   roles:
-    - prepare
-    - configure-server
-    
-  environment:
-    ENVIRONMENT: production
-    TYPEORM_CONNECTION: postgres
-    TYPEORM_ENTITIES: "./src/modules/domain/**/*.entity.ts"
-    TYPEORM_HOST: circleci.cn96dsgsdnov.us-east-2.rds.amazonaws.com
-    TYPEORM_PORT: 5432
-    TYPEORM_USERNAME: postgres
-    TYPEORM_PASSWORD: 12345678
-    TYPEORM_DATABASE: postgres
+    - configure-prometheus-node-exporter
