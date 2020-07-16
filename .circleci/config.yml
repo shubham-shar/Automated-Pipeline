@@ -39,6 +39,26 @@ commands:
           workflow_id: << parameters.workflow_id >>
           event: << parameters.event >>
 
+  delete-all-stack:
+    description: Delete all stack
+    parameters:
+      workflow_id:
+        type: string
+      event:
+        type: string
+    steps:
+      - restore_cache:
+          keys: [backend-build]
+      - attach_workspace:
+          at: ~/project/backend
+      - run:
+          name: Revert migrations
+          when: << parameters.event >>
+          command: aws cloudformation delete-stack --stack-name udapeople-<< parameters.workflow_id >>
+      - rollback-migrations-on-fail:
+          workflow_id: << parameters.workflow_id >>
+          event: << parameters.event >>
+
 jobs: 
   build-frontend:
     executor:
@@ -278,7 +298,7 @@ jobs:
             --template-file .circleci/files/cloudfront.yml \
             --stack-name udapeople-${CIRCLE_WORKFLOW_ID:0:7} \
             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-      - rollback-migrations-on-fail:
+      - delete-all-stack:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
   cleanup-phase:
@@ -302,7 +322,7 @@ jobs:
             curl --request PUT --data "${CIRCLE_WORKFLOW_ID:0:7}" \
             https://api.memstash.io/values/previous_job \
             -H "Content-Type: text/plain" -H "token: previous_job_id"
-      - rollback-migrations-on-fail:
+      - delete-all-stack:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
 workflows:
