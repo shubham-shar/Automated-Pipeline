@@ -12,6 +12,7 @@
     update_cache: yes
 
 - name: Start backend server
+  become: true
   shell: |
     npm install -g n 
     n 12.18.1
