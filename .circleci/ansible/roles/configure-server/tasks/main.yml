@@ -11,6 +11,15 @@
     state: latest
     update_cache: yes
 
+- name: Start backend server
+  shell: |
+    npm install -g n 
+    n 12.18.1
+  register: output
+
+- debug:
+    var: output.stdout_lines
+
 - name: "install pm2"
   become: true
   npm:
