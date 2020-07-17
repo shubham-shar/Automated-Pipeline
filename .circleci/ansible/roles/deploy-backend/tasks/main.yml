@@ -10,14 +10,14 @@
 - name: add content to .env file
   shell: |
     cd /home/ubuntu/application/backend/
-    echo "ENVIRONMENT: production" >> .env
-    echo "TYPEORM_CONNECTION: postgres" >> .env
-    echo "TYPEORM_ENTITIES: \"./src/modules/domain/**/*.entity.ts\"" >> .env
-    echo "TYPEORM_HOST: circleci.cn96dsgsdnov.us-east-2.rds.amazonaws.com" >> .env
-    echo "TYPEORM_PORT: 5432" >> .env
-    echo "TYPEORM_USERNAME: postgres" >> .env
-    echo "TYPEORM_PASSWORD: 12345678" >> .env
-    echo "TYPEORM_DATABASE: postgres" >> .env
+    echo "ENVIRONMENT=production" >> .env
+    echo "TYPEORM_CONNECTION=postgres" >> .env
+    echo "TYPEORM_ENTITIES=\"./src/modules/domain/**/*.entity.ts\"" >> .env
+    echo "TYPEORM_HOST=circleci.cn96dsgsdnov.us-east-2.rds.amazonaws.com" >> .env
+    echo "TYPEORM_PORT=5432" >> .env
+    echo "TYPEORM_USERNAME=postgres" >> .env
+    echo "TYPEORM_PASSWORD=12345678" >> .env
+    echo "TYPEORM_DATABASE=postgres" >> .env
 
 - name: Start backend server
   shell: |
