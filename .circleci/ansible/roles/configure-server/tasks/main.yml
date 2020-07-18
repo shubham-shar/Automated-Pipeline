@@ -21,13 +21,13 @@
 - debug:
     var: output.stdout_lines
 
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
+# - name: "install pm2"
+#   become: true
+#   npm:
+#     name: pm2
+#     global: yes
+#     production: yes
+#     state: present
 - name: Creates directory
   file:
     path: ~/application
@@ -41,7 +41,7 @@
     owner: ubuntu
     group: ubuntu
     mode: '0755'
-  register: output
+#   register: output
 
-- debug:
-    var: output
+# - debug:
+#     var: output

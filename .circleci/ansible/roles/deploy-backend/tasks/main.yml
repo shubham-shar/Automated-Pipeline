@@ -25,7 +25,7 @@
     cd /home/ubuntu/application/backend/
     npm install
     npm run build
-    npm run start &
+    npm run start > log.out &
   register: output
   
 - debug:
