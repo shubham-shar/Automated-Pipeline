@@ -233,7 +233,7 @@ All this automated deployment stuff is great, but what if there’s something we
 
 - Add a job to make a simple test on both front-end and back-end. Use the suggested tests below or come up with your own. 
   - Check `$API_URL/api/status` to make sure it returns a healthy response.
-```bash
+```bash 
 BACKEND_IP=$(aws ec2 describe-instances \
   --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
   --query 'Reservations[*].Instances[*].PublicIpAddress' \
