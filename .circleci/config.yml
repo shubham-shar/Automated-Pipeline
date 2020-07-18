@@ -390,6 +390,6 @@ workflows:
         - cleanup-phase:
             requires:
               - promotion-phase
-        - setup-node-exporter:
-            requires:
-              - cleanup-phase
+        # - setup-node-exporter:
+        #     requires:
+        #       - cleanup-phase
