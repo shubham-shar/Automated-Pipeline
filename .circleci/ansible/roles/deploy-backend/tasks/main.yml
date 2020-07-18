@@ -11,6 +11,7 @@
   shell: |
     cd /home/ubuntu/application/backend/
     echo "ENVIRONMENT=production" >> .env
+    echo "NODE_ENV=production" >> .env
     echo "TYPEORM_CONNECTION=postgres" >> .env
     echo "TYPEORM_ENTITIES=\"./src/modules/domain/**/*.entity.ts\"" >> .env
     echo "TYPEORM_HOST=circleci.cn96dsgsdnov.us-east-2.rds.amazonaws.com" >> .env

@@ -368,7 +368,7 @@ workflows:
               branches:
                 only:
                   - master
-                  - circleci-project-setup
+                  # - circleci-project-setup
         - configure-infrastructure:
             requires:
               - deploy-infrastructure
