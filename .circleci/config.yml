@@ -281,14 +281,14 @@ jobs:
             else
             return 0
             fi
-      # - run:
-      #     name: Test Backend
-      #     command: |
-      #       BACKEND_URL=$(aws ec2 describe-instances \
-      #       --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #       --query 'Reservations[*].Instances[*].PublicDnsName' \
-      #       --output text)
-      #       curl "http://${BACKEND_URL}:3030/api/status"
+      - run:
+          name: Test Backend
+          command: |
+            BACKEND_URL=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name, Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicDnsName' \
+            --output text)
+            curl "http://${BACKEND_URL}:3030/api/status"
       - rollback-migrations-on-fail:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
           event: on_fail
@@ -368,7 +368,7 @@ workflows:
               branches:
                 only:
                   - master
-                  # - circleci-project-setup
+                  - circleci-project-setup
         - configure-infrastructure:
             requires:
               - deploy-infrastructure
