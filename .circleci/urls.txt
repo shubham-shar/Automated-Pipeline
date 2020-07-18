@@ -1,2 +1,0 @@
-github url -> https://github.com/shubham-shar/Automated-Pipeline/
-prometheus server -> http://ec2-13-58-216-209.us-east-2.compute.amazonaws.com:9090/graph?g0.range_input=1h&g0.expr=scrape_samples_scraped&g0.tab=0

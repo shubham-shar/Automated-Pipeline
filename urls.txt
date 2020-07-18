@@ -1,0 +1,5 @@
+github url -> https://github.com/shubham-shar/Automated-Pipeline/
+prometheus server -> http://ec2-13-58-216-209.us-east-2.compute.amazonaws.com:9090
+frontend -> http://udapeople-a4fd061.s3-website.us-east-2.amazonaws.com/index.html
+backend -> ec2-18-191-183-199.us-east-2.compute.amazonaws.com:3030/api/status
+cloudfront -> d1sn0hvziwmzdx.cloudfront.net
